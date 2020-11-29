@@ -18,6 +18,6 @@
 #### filter 针对字符编码重写过滤器
 ### web
 #### js 存放jQuery库
-### WEb-INF
+#### WEb-INF
 #### lib 包含各种jsp项目所依赖的库文件
 #### .jsp文件  网页及功能的实现
