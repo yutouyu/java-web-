@@ -4,7 +4,9 @@
   Date: 2020-11-17
   Time: 16:13
   To change this template use File | Settings | File Templates.
-  登录界面，可跳转到注册界面
+--%>
+<%--
+  登陆界面
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="loginBean" class="bean.login" scope="session"/>

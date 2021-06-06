@@ -5,8 +5,12 @@
   Time: 10:47
   To change this template use File | Settings | File Templates.
 --%>
+<%--
+  查询商品页跳转后的商品详情页
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="bean.goods" %>
+<%@ page import="java.sql.*" %>
 <jsp:useBean id="loginBean" class="bean.login" scope="session"/>
 <jsp:useBean id="allgsBean" class="bean.allgoods" scope="session"/>
 <jsp:useBean id="controlBean" class="bean.pagecontrol" scope="session"/>
@@ -57,6 +61,26 @@
         out.print("<td>"+Des+"</td>");
         out.print("</tr>");
 
+        try {
+            Connection con = null;
+            PreparedStatement sql = null;
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+            String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+            String USER_NAME = "yu";      //数据库用户名
+            String PASSWORD = "password";     //数据库密码
+            con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
+            String condition="INSERT INTO view_record VALUES (?,?,?,?)";
+            sql=con.prepareStatement(condition);
+            sql.setString(1,Id);
+            sql.setString(2,Name);
+            sql.setString(3,loginBean.getLogname());
+            Timestamp viewTime = new Timestamp(System.currentTimeMillis());
+            sql.setTimestamp(4,viewTime);
+            sql.executeUpdate();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
 
     %>
 </table>

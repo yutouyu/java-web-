@@ -1,12 +1,11 @@
+//实现用户注册
 package com.controller;
-
 import bean.*;
 import java.sql.*;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-
 
 @WebServlet("/registerServlet")
 public class registerServlet extends HttpServlet {
@@ -24,8 +23,8 @@ public class registerServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request,HttpServletResponse response)
             throws ServletException,IOException{
-        String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-        String USER_NAME = "root";      //数据库用户名
+        String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+        String USER_NAME = "yu";      //数据库用户名
         String PASSWORD = "password";     //数据库密码
         Connection con = null;
         try {

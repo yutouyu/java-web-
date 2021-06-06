@@ -1,5 +1,5 @@
+//处理不同页面上的“商品加入购物车”操作，方便网页跳转到正确页面
 package com.controller;
-
 import bean.*;
 import java.io.*;
 import javax.servlet.*;

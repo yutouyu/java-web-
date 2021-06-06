@@ -5,6 +5,9 @@
   Time: 09:57
   To change this template use File | Settings | File Templates.
 --%>
+<%--
+  实现模糊查询需要有数据库的支持*
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <jsp:useBean id="loginBean" class="bean.login" scope="session"/>
@@ -24,8 +27,8 @@
     if(searchMess!=null&&searchMess.length()!=0){
     try {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-        String USER_NAME = "root";      //数据库用户名
+        String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+        String USER_NAME = "yu";      //数据库用户名
         String PASSWORD = "password";     //数据库密码
         con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
         //模糊查询
@@ -44,26 +47,43 @@
             out.print("<th></th>");
             out.print("</tr>");
             while (result.next()){
+                int goodsnumber=result.getInt("goodsNumber");
                 String goodsId=result.getString("goodsId");
                 String goodsName=result.getString("goodsName");
                 Double goodsPrice=result.getDouble("goodsPrice");
                 String goodsBrand=result.getString("goodsBrand");
-                String button="<form  action='goodsToCarServlet' method = 'post' style=\"margin: auto\">"+
-                        "<input type ='hidden' name='add4' value= "+goodsId+">"+
-                        "<input type ='hidden' name='searchMess' value= "+searchMess+">"+
-                        "<input type ='submit'  value='加入购物车' ></form>";
-                String detail="<form  action='goodsdetail1.jsp' method = 'post' style=\"margin: auto\">"+
-                        "<input type ='hidden' name='detail' value= "+goodsId+">"+
-                        "<input type ='hidden' name='searchMess' value= "+searchMess+">"+
-                        "<input type ='submit'  value='查看细节' ></form>";
-                out.print("<tr>");
-                out.print("<td>"+goodsName+"</td>");
-                out.print("<td>"+goodsBrand+"</td>");
-                out.print("<td>"+goodsPrice+"</td>");
-                out.print("<td>"+detail+"</td>");
-                out.print("<td>"+button+"</td>");
-                out.print("</tr>");
-
+                if(goodsnumber>0) {
+                    String button = "<form  action='goodsToCarServlet' method = 'post' style=\"margin: auto\">" +
+                            "<input type ='hidden' name='add4' value= " + goodsId + ">" +
+                            "<input type ='hidden' name='searchMess' value= " + searchMess + ">" +
+                            "<input type ='submit'  value='加入购物车' ></form>";
+                    String detail = "<form  action='goodsdetail1.jsp' method = 'post' style=\"margin: auto\">" +
+                            "<input type ='hidden' name='detail' value= " + goodsId + ">" +
+                            "<input type ='hidden' name='searchMess' value= " + searchMess + ">" +
+                            "<input type ='submit'  value='查看细节' ></form>";
+                    out.print("<tr>");
+                    out.print("<td>" + goodsName + "</td>");
+                    out.print("<td>" + goodsBrand + "</td>");
+                    out.print("<td>" + goodsPrice + "</td>");
+                    out.print("<td>" + detail + "</td>");
+                    out.print("<td>" + button + "</td>");
+                    out.print("</tr>");
+                }
+                else{
+                    String button = "<form  action='showresult.jsp' method = 'post' style=\"margin: auto\">" +
+                            "<input type ='hidden' name='searchMess' value= " + searchMess + ">" +
+                            "<input type ='submit'  value='库存不足' ></form>";
+                    String detail = "<form  action='showresult.jsp' method = 'post' style=\"margin: auto\">" +
+                            "<input type ='hidden' name='searchMess' value= " + searchMess + ">" +
+                            "<input type ='submit'  value='暂无法查看' ></form>";
+                    out.print("<tr>");
+                    out.print("<td>" + goodsName + "</td>");
+                    out.print("<td>" + goodsBrand + "</td>");
+                    out.print("<td>" + "无法查看"+ "</td>");
+                    out.print("<td>" + detail + "</td>");
+                    out.print("<td>" + button + "</td>");
+                    out.print("</tr>");
+                }
             }
 
         }

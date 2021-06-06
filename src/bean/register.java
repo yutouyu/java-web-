@@ -1,3 +1,4 @@
+//用户注册信息定义
 package bean;
 
 public class register{

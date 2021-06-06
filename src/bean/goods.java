@@ -1,9 +1,15 @@
+//商品信息定义
 package bean;
 
 public class goods {
     String goodsId="",goodsName="",goodsBrand="",goodDes="";
     double  goodPrice=0;
     int goodsNumber=0;
+
+
+
+    String empId="";
+    //储存会使用到的信息，empId使用频率较低
 
     public int getGoodsNumber() {
         return goodsNumber;
@@ -52,4 +58,7 @@ public class goods {
     public void setGoodPrice(double goodPrice) {
         this.goodPrice = goodPrice;
     }
+    public String getEmpId() { return empId; }
+
+    public void setEmpId(String empId) { this.empId = empId; }
 }

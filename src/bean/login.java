@@ -1,5 +1,5 @@
+//挂载登录信息和购物功能组件
 package bean;
-//记载登录信息和购物车信息
 import java.util.*;
 
 import javax.mail.Message;
@@ -7,11 +7,77 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
 public class login {
-    String logname = "", phone = "",
-            address = "", realname = "", backNews = "",mailbox="";
+    String logname = "";
+    String phone = "";
+    String address = "";
+    String realname = "";
+    String backNews = "";
+    String mailbox="";
+    String ip="";
     HashMap<String, goods> car;
+    //用来储存用户买过的商品的ID-num集
+    //后面对该map的value降序排序取出最多4个用于推荐，将ID保存到一个list中
+    //进入商城首页前将与用户Id绑定的销售信息导入
+    HashMap<String,Integer> recom;
+    public login() {
+        car = new HashMap<String, goods>();
+        recom = new HashMap<String,Integer>();
+    }
+
+    public HashMap<String, Integer> getRecom() {
+        return recom;
+    }
+
+    //内置对该map的value降序排序，返回类型为list
+    public List<HashMap.Entry<String, Integer>> getDeList(){
+        HashMap<String, Integer> list = new HashMap<String,Integer>();
+        list=this.recom;
+        List<HashMap.Entry<String, Integer>> delist = new ArrayList<HashMap.Entry<String, Integer>>(list.entrySet()); //转换为list
+        delist.sort(new Comparator<HashMap.Entry<String, Integer>>() {
+            @Override
+            public int compare(HashMap.Entry<String, Integer> o1, HashMap.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());//降序排列
+            }
+        });
+        for(int i=4;i<delist.size();i++){
+            //删除i位置后，后续元素会补上原来被删的位置，i++会跳过该位置
+            delist.remove(i--);//只取最多4个
+        }
+        return delist;
+    }
+
+
+    public void setRecom(HashMap<String, Integer> recom) {
+        this.recom = recom;
+    }
+
+    public void setIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        this.ip=ip;
+    }
+
+
+    public String getIp() {
+        return ip;
+    }
 
     public String getMailbox() {
         return mailbox;
@@ -21,9 +87,7 @@ public class login {
         this.mailbox = mailbox;
     }
 
-    public login() {
-        car = new HashMap<String, goods>();
-    }
+
 
     public void setLogname(String logname) {
         this.logname = logname;

@@ -4,7 +4,9 @@
   Date: 2020-11-20
   Time: 14:48
   To change this template use File | Settings | File Templates.
-  查看订单和历史订单
+--%>
+<%--
+  查看对应用户的订单
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -75,7 +77,7 @@
             Timestamp Time = entry.getValue().getTimestamp();//下单时间
             Double moneySum = entry.getValue().getOrderSum();//交易金额
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            String time=sdf.format(Time);
+            String time=sdf.format(Time);//标准化输出
             String detail="<form  action='orderdetail.jsp' method = 'post' style=\"margin: auto\">"+
                     "<input type ='hidden' name='orderdetail' value= "+orderId+">"+
                     "<input type ='submit'  value='查看订单详情' ></form>";

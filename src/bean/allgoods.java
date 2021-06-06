@@ -1,6 +1,6 @@
-package bean;
-//获取所有商品信息,
+//预加载所有商品信息和对商品本身信息操作
 //此HashMap对象中key为商品id，value为goods实体
+package bean;
 import java.sql.*;
 import java.util.*;
 
@@ -15,11 +15,46 @@ public class allgoods {
         //连接数据库进行数据装载
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-            String USER_NAME = "root";      //数据库用户名
+            String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+            String USER_NAME = "yu";      //数据库用户名
             String PASSWORD = "password";     //数据库密码
             con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
             String condition="select * from tb_goods";
+            sql=con.prepareStatement(condition);
+            ResultSet result=sql.executeQuery();
+            while (result.next()){
+                goods Sgoods=new goods();
+                Sgoods.setGoodsId(result.getString("goodsId"));
+                Sgoods.setGoodsName(result.getString("goodsName"));
+                Sgoods.setGoodPrice(result.getDouble("goodsPrice"));
+                Sgoods.setGoodsBrand(result.getString("goodsBrand"));
+                Sgoods.setGoodDes(result.getString("goodsDes"));
+                Sgoods.setGoodsNumber(result.getInt("goodsNumber"));
+                Sgoods.setEmpId(result.getString("empId"));
+                //过滤库存不足的商品
+                if(Sgoods.getGoodsNumber()!=0)
+                {
+                    hashmap.put(result.getString("goodsId"),Sgoods);
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            //数据库
+        }
+    }
+
+    public allgoods(String empId){//根据销售员的需求重构
+        Connection con = null;
+        PreparedStatement sql = null;
+        //连接数据库进行数据装载
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+            String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+            String USER_NAME = "yu";      //数据库用户名
+            String PASSWORD = "password";     //数据库密码
+            con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
+            String condition="select * from tb_goods where empId='"+empId+"'";
             sql=con.prepareStatement(condition);
             ResultSet result=sql.executeQuery();
             while (result.next()){
@@ -67,8 +102,8 @@ public class allgoods {
             //连接数据库进行数据装载
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-                String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-                String USER_NAME = "root";      //数据库用户名
+                String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+                String USER_NAME = "yu";      //数据库用户名
                 String PASSWORD = "password";     //数据库密码
                 con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
                 String condition="update tb_goods set  goodsNumber=0  where goodsId= '"+Id+"'";
@@ -99,8 +134,8 @@ public class allgoods {
         //连接数据库进行数据装载
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-            String USER_NAME = "root";      //数据库用户名
+            String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+            String USER_NAME = "yu";      //数据库用户名
             String PASSWORD = "password";     //数据库密码
             con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
             String condition="select * from tb_goods";
@@ -114,6 +149,7 @@ public class allgoods {
                 Sgoods.setGoodsBrand(result.getString("goodsBrand"));
                 Sgoods.setGoodDes(result.getString("goodsDes"));
                 Sgoods.setGoodsNumber(result.getInt("goodsNumber"));
+                Sgoods.setEmpId(result.getString("empId"));
                 if(Sgoods.getGoodsNumber()!=0)
                 {
                     hashmap.put(result.getString("goodsId"),Sgoods);

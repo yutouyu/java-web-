@@ -5,6 +5,10 @@
   Time: 21:30
   To change this template use File | Settings | File Templates.
 --%>
+<%--
+  订单中详细信息
+  普通用户展示页面
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.sql.*" %>
@@ -19,9 +23,6 @@
 <body>
 <jsp:setProperty name="controlBean2" property="pageSize" param="pageSize"/>
 <jsp:setProperty name="controlBean2" property="currentPage" param="currentPage"/>
-<!--控制页面的输出-->
-
-
 <%
     String orderId=request.getParameter("orderdetail");
     Connection con = null;
@@ -30,8 +31,8 @@
     //连接数据库进行数据装载
     try {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-        String USER_NAME = "root";      //数据库用户名
+        String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+        String USER_NAME = "yu";      //数据库用户名
         String PASSWORD = "password";     //数据库密码
         con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
         String condition="select * from tb_orderinfo where orderId='"+orderId+"'";

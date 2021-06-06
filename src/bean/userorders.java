@@ -1,8 +1,7 @@
+//用户订单信息的装载
 package bean;
-
 import java.sql.*;
 import java.util.*;
-
 
 public class userorders {
     HashMap<String,order> hashmap=new HashMap<String,order>();
@@ -13,8 +12,8 @@ public class userorders {
         //连接数据库进行数据装载
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-            String USER_NAME = "root";      //数据库用户名
+            String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+            String USER_NAME = "yu";      //数据库用户名
             String PASSWORD = "password";     //数据库密码
             con = DriverManager.getConnection(URL,USER_NAME,PASSWORD);
             String condition="select * from tb_order where userName='"+userName+"'";

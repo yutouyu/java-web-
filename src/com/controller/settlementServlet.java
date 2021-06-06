@@ -1,3 +1,4 @@
+//实现用户结算
 package com.controller;
 import bean.*;
 import java.sql.*;
@@ -22,8 +23,8 @@ public class settlementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         //建立数据库连接
-        String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-        String USER_NAME = "root";      //数据库用户名
+        String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+        String USER_NAME = "yu";      //数据库用户名
         String PASSWORD = "password";     //数据库密码
         Connection con = null;
         try {
@@ -38,7 +39,7 @@ public class settlementServlet extends HttpServlet {
         userorders orderBean=(userorders)session.getAttribute("orderBean");
         if(loginBean.getCar().size()!=0){
             try {
-                PreparedStatement sql1 = null,sql2 = null,sql3=null;
+                PreparedStatement sql1 = null,sql2 = null,sql3=null,sql_emp=null;
                 //先更新库存信息导入到allgsBean中
                 allgsBean.reset();
                 //把购物车里的商品库存信息核对一遍
@@ -57,7 +58,9 @@ public class settlementServlet extends HttpServlet {
 
                 //能运行下来说明能够购买
                 String orderId=  System.currentTimeMillis()+"";//获取统一的时间数作为订单号
-                String insertCondition="INSERT INTO tb_orderinfo VALUES (?,?,?,?,?,?)";//将购物车信息更新到数据库
+                //日志文件的修改，
+                String insertCondition="INSERT INTO tb_orderinfo VALUES (?,?,?,?,?,?,?)";//将购物车信息更新到数据库
+                String emp_insertCondition=null;
                 String body = "订单号为"+orderId+"<br/>用户名为"+loginBean.getLogname()+"<br/>";
                 iterator = loginBean.getCar().entrySet().iterator();
                 while(iterator.hasNext()){
@@ -73,8 +76,14 @@ public class settlementServlet extends HttpServlet {
                     body=body+"商品价格:"+entry.getValue().getGoodPrice()+"    ";
                     sql1.setInt(6,entry.getValue().getGoodsNumber());//购买数量
                     body=body+"购买数量:"+entry.getValue().getGoodsNumber()+"<br/>";
+                    sql1.setString(7, entry.getValue().getEmpId());//销售信息
                     sql1.executeUpdate();
+                    //还需要对emp_sale_goods同步更新，通过唯一的商品标号
+                    emp_insertCondition="update emp_sale_goods set sale_number=sale_number+"+entry.getValue().getGoodsNumber()+" where goodsId='"+entry.getValue().getGoodsId()+"'";
+                    sql_emp=con.prepareStatement(emp_insertCondition);
+                    sql_emp.executeUpdate();
                 }
+
                 //计算订单金额，也可从页面导入实现
                 iterator= loginBean.getCar().entrySet().iterator();
                 Double sum = 0.0;
@@ -106,7 +115,7 @@ public class settlementServlet extends HttpServlet {
                 session.setAttribute("uesrBean",orderBean);
                 session.setAttribute("loginBean", loginBean);
                 session.setAttribute("allgsBean", allgsBean);
-                loginBean.sendmail(body);
+//                loginBean.sendmail(body);
                 request.getRequestDispatcher("browsecar.jsp").forward(request, response);
 
                     }

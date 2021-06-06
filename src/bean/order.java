@@ -1,8 +1,6 @@
+//用户订单信息定义
 package bean;
-
-
 import java.sql.*;
-
 
 //登录后即放入session中方便查看历史订单，订单也可以分页
 public class order {

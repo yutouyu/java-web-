@@ -5,10 +5,15 @@
   Time: 12:31
   To change this template use File | Settings | File Templates.
 --%>
+<%--
+  以前是管理员修改的子页面，需要给销售人员处理**
+  优化成先检索需要进行修改的商品的信息**
+  暂不支持对商品绑定的销售人员的修改，需要更高的权限
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
-<jsp:useBean id="loginBean" class="bean.login" scope="session"/>
-<jsp:useBean id="allgsBean" class="bean.allgoods" scope="session"/>
+<jsp:useBean id="emp_loginBean" class="bean.emp_login" scope="session"/>
+<jsp:useBean id="emp_allgsBean" class="bean.allgoods" scope="session"/>
 <html>
 <head>
     <title>修改商品信息</title>
@@ -35,17 +40,23 @@
     PreparedStatement sql = null;
     if(goodsId!=null&&goodsId.length()!=0) {
         if ((goodsName.length() != 0 || goodsPrice.length() != 0 || goodsBrand.length() != 0 || goodsDes.length() != 0 || goodsNumber.length() != 0)) {
-            String updatecondition = "update tb_goods set ";
+            String updatecondition = "update tb_goods set ";//对tb_goods开始更改
 
+            String updatecondition1 = "update emp_sale_goods set ";//对emp_sale_goods开始更改
             if (goodsName.length() != 0) {
                 updatecondition = updatecondition + "goodsName='" + goodsName + "' ,";
+
+                updatecondition1 = updatecondition1 + "goodsName='" + goodsName + "' ,";
             }
             if (goodsPrice.length() != 0) {
                 if (goodsPrice.equals("0.0")) {
                     updatecondition = updatecondition + "goodsPrice=0.0 ,";
 
+                    updatecondition1 = updatecondition1 + "goodsPrice=0.0 ,";
                 } else {//理论上可以不用Double.parseDouble转换类型
                     updatecondition = updatecondition + "goodsPrice=" + goodsPrice + " ,";
+
+                    updatecondition1 = updatecondition1 + "goodsPrice=" + goodsPrice + " ,";
                 }
             }
             if (goodsBrand.length() != 0) {
@@ -63,18 +74,28 @@
             }
 
             updatecondition = updatecondition.substring(0, updatecondition.length() - 1);
+            updatecondition1 = updatecondition1.substring(0, updatecondition1.length() - 1);
+
             updatecondition = updatecondition + "where goodsId='" + goodsId + "'";
+            updatecondition1 = updatecondition1 + "where goodsId='" + goodsId + "'";
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-                String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-                String USER_NAME = "root";      //数据库用户名
+                String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+                String USER_NAME = "yu";      //数据库用户名
                 String PASSWORD = "password";     //数据库密码
                 con = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
                 //模糊查询
                 sql = con.prepareStatement(updatecondition);
                 int m = sql.executeUpdate();
                 if (m != 0) {
-                    out.print("修改成功！");
+                    sql = con.prepareStatement(updatecondition1);
+                    m = sql.executeUpdate();
+                    if(m!=0){
+                        out.print("修改成功");
+                    }
+                    else{
+                        out.print("输入信息类型有误请重新输入");
+                    }
                 } else {
                     out.print("输入信息类型有误请重新输入");
                 }
@@ -94,6 +115,6 @@
     }
 %>
 <br>
-<input type="button" value="返回" onclick="window.location.href='admin.jsp'">
+<input type="button" value="返回" onclick="window.location.href='sale_emp.jsp'">
 </body>
 </html>

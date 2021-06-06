@@ -1,5 +1,5 @@
+//网页信息分页
 package bean;
-
 
 public class pagecontrol {
     int pageSize=4;                      //每页显示的记录数

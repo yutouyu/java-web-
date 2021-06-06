@@ -1,8 +1,9 @@
+//用户登录信息和基础javabean的装载
 package com.controller;
-
 import bean.*;
 import java.sql.*;
 import java.io.*;
+import java.util.Date;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -19,11 +20,12 @@ public class loginServlet extends HttpServlet {
             //数据库连接失败
         }
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         //建立数据库连接
-        String URL = "jdbc:mysql://localhost:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
-        String USER_NAME = "root";      //数据库用户名
+        String URL = "jdbc:mysql://47.115.63.32:3306/jsp_test?characterEncoding=utf-8&serverTimezone=UTC";
+        String USER_NAME = "yu";      //数据库用户名
         String PASSWORD = "password";     //数据库密码
         Connection con = null;
         try {
@@ -33,13 +35,12 @@ public class loginServlet extends HttpServlet {
         }
         PreparedStatement sql = null;
         login loginBean=new login();
+        //商品预加载
         allgoods allgsBean=new allgoods();
-
 
         //创建的Javabean模型
 
         HttpSession session=request.getSession(true);
-
 
         //将javaBean加入session
 
@@ -71,7 +72,11 @@ public class loginServlet extends HttpServlet {
                     loginBean.setAddress(result.getString(4));
                     loginBean.setRealname(result.getString(5));
                     loginBean.setMailbox(result.getString(7));
+                    loginBean.setIpAddr(request);
                     loginBean.setBackNews("成功登陆");
+                    //设置登陆时间戳
+                    Timestamp loginTime = new Timestamp(System.currentTimeMillis());
+                    session.setAttribute("loginTime",loginTime);
                     userorders orderBean=new userorders();
                     orderBean.load(uname);
                     session.setAttribute("orderBean",orderBean);
@@ -79,6 +84,7 @@ public class loginServlet extends HttpServlet {
                     session.setAttribute("allgsBean",allgsBean);
                 }
                 catch(Exception ee){
+                    symbol=result.getInt(6);
                     loginBean=new login();
                     session.setAttribute("loginBean",loginBean);
                     loginBean.setLogname(uname);
@@ -86,7 +92,10 @@ public class loginServlet extends HttpServlet {
                     loginBean.setAddress(result.getString(4));
                     loginBean.setRealname(result.getString(5));
                     loginBean.setMailbox(result.getString(7));
+                    loginBean.setIpAddr(request);
                     loginBean.setBackNews("成功登陆");
+                    Timestamp loginTime = new Timestamp(System.currentTimeMillis());
+                    session.setAttribute("loginTime",loginTime);
                     userorders orderBean=new userorders();
                     orderBean.load(uname);
                     session.setAttribute("orderBean",orderBean);
@@ -94,7 +103,8 @@ public class loginServlet extends HttpServlet {
                     session.setAttribute("allgsBean",allgsBean);
                 }
                 if(symbol==1)//管理员设置为1
-                {
+                {   //管理员中的orderBean必然为空，但可以通过特权网页直接访问数据库
+                    //allgsBean加载了所有商品
                     request.getRequestDispatcher("admin.jsp").forward(request,response);
                 }
                 else{
