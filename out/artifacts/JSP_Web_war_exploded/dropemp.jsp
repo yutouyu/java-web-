@@ -39,12 +39,12 @@
             while (result.next()){
                 String empId=result.getString("empId");
                 String empName=result.getString("empName");
-                Double empPwd=result.getDouble("empPwd");
+                String empPwd=result.getString("empPwd");
                 String empTel=result.getString("empTel");
                 out.print("<td>" + empId + "</td>");
                 out.print("<td>" + empName + "</td>");
                 out.print("<td>" + empPwd + "</td>");
-                out.print("<td>" + empPwd + "</td>");
+                out.print("<td>" + empTel + "</td>");
                 out.print("</tr>");
             }
 
